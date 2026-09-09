@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NeuroSign AI | Traffic Sign Classification</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- Navigation -->
+        <nav class="navbar">
+
+            <div class="brand">
+                <div class="brand-icon">🚦</div>
+
+                <div>
+                    <h1>NeuroSign AI</h1>
+                    <span>Traffic Sign Intelligence</span>
+                </div>
+            </div>
+
+            <div class="nav-status">
+                <span class="status-dot"></span>
+                AI MODEL ONLINE
+            </div>
+
+        </nav>
+
+
+        <!-- Main Content -->
+        <main>
+
+            <!-- Hero Section -->
+            <section class="hero">
+
+                <div class="hero-text">
+
+                    <div class="badge">
+                        COMPUTER VISION • MACHINE LEARNING
+                    </div>
+
+                    <h2>
+                        Understand the road
+                        <span>at a glance.</span>
+                    </h2>
+
+                    <p>
+                        Upload a traffic sign image and let our machine
+                        learning model identify the sign, category,
+                        confidence score, shape, and dominant color.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Upload Card -->
+            <section class="workspace">
+
+                <div class="upload-card" id="uploadCard">
+
+                    <div class="upload-icon">
+                        ↑
+                    </div>
+
+                    <h3>Upload a Traffic Sign</h3>
+
+                    <p>
+                        Drag & drop an image here or select one from
+                        your computer.
+                    </p>
+
+                    <label for="imageInput" class="choose-btn">
+                        Choose Image
+                    </label>
+
+                    <input
+                        type="file"
+                        id="imageInput"
+                        accept="image/png,image/jpeg,image/jpg,image/webp,image/bmp"
+                        hidden
+                    >
+
+                    <div class="formats">
+                        PNG · JPG · JPEG · WEBP · BMP
+                    </div>
+
+                </div>
+
+
+                <!-- Preview -->
+                <div class="preview-card hidden" id="previewCard">
+
+                    <div class="card-heading">
+                        <span>IMAGE PREVIEW</span>
+
+                        <button id="removeBtn" class="small-btn">
+                            Remove
+                        </button>
+                    </div>
+
+                    <div class="preview-area">
+
+                        <img id="previewImage"
+                             src=""
+                             alt="Traffic sign preview">
+
+                    </div>
+
+                    <button id="analyzeBtn" class="analyze-btn">
+                        Analyze Traffic Sign
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- Loading -->
+            <section class="loading-card hidden" id="loadingCard">
+
+                <div class="loader"></div>
+
+                <div>
+                    <strong>Analyzing image...</strong>
+                    <p>
+                        Our computer vision model is identifying
+                        the traffic sign.
+                    </p>
+                </div>
+
+            </section>
+
+
+            <!-- Results -->
+            <section class="results hidden" id="resultsSection">
+
+                <div class="result-header">
+
+                    <div>
+                        <div class="badge success-badge">
+                            ANALYSIS COMPLETE
+                        </div>
+
+                        <h2>Recognition Result</h2>
+                    </div>
+
+                    <button id="newAnalysisBtn"
+                            class="outline-btn">
+                        + New Analysis
+                    </button>
+
+                </div>
+
+
+                <div class="result-grid">
+
+                    <!-- Main Result -->
+                    <div class="main-result card">
+
+                        <div class="result-image-wrapper">
+                            <img id="resultImage"
+                                 src=""
+                                 alt="Analyzed traffic sign">
+                        </div>
+
+                        <div class="result-info">
+
+                            <span class="result-label">
+                                DETECTED SIGN
+                            </span>
+
+                            <h3 id="signName">
+                                —
+                            </h3>
+
+                            <div class="confidence-row">
+
+                                <span>Confidence</span>
+
+                                <strong id="confidenceValue">
+                                    —
+                                </strong>
+
+                            </div>
+
+                            <div class="confidence-bar">
+                                <div id="confidenceFill"></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Details -->
+                    <div class="details-card card">
+
+                        <div class="card-title">
+                            Sign Details
+                        </div>
+
+                        <div class="detail-item">
+
+                            <span>Category</span>
+
+                            <strong id="categoryValue">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-item">
+
+                            <span>Detected Shape</span>
+
+                            <strong id="shapeValue">
+                                —
+                            </strong>
+
+                        </div>
+
+                        <div class="detail-item">
+
+                            <span>Dominant Color</span>
+
+                            <strong id="colorValue">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="description-card card">
+
+                        <div class="card-title">
+                            What does this sign mean?
+                        </div>
+
+                        <p id="descriptionValue">
+                            —
+                        </p>
+
+                    </div>
+
+
+                    <!-- Top Matches -->
+                    <div class="matches-card card">
+
+                        <div class="card-title">
+                            Top Model Matches
+                        </div>
+
+                        <div id="matchesContainer">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Error -->
+            <div class="error-card hidden" id="errorCard">
+
+                <strong>Something went wrong</strong>
+
+                <p id="errorMessage">
+                    Unable to analyze the image.
+                </p>
+
+            </div>
+
+        </main>
+
+
+        <!-- Footer -->
+        <footer>
+
+            <div>
+                <strong>NeuroSign AI</strong>
+                <span>Traffic Sign Classification System</span>
+            </div>
+
+            <div>
+                CNN / Computer Vision · Random Forest · Flask
+            </div>
+
+        </footer>
+
+    </div>
+
+
+    <script>
+
+        const imageInput =
+            document.getElementById("imageInput");
+
+        const uploadCard =
+            document.getElementById("uploadCard");
+
+        const previewCard =
+            document.getElementById("previewCard");
+
+        const previewImage =
+            document.getElementById("previewImage");
+
+        const analyzeBtn =
+            document.getElementById("analyzeBtn");
+
+        const removeBtn =
+            document.getElementById("removeBtn");
+
+        const loadingCard =
+            document.getElementById("loadingCard");
+
+        const resultsSection =
+            document.getElementById("resultsSection");
+
+        const errorCard =
+            document.getElementById("errorCard");
+
+        const errorMessage =
+            document.getElementById("errorMessage");
+
+        const resultImage =
+            document.getElementById("resultImage");
+
+        const signName =
+            document.getElementById("signName");
+
+        const confidenceValue =
+            document.getElementById("confidenceValue");
+
+        const confidenceFill =
+            document.getElementById("confidenceFill");
+
+        const categoryValue =
+            document.getElementById("categoryValue");
+
+        const shapeValue =
+            document.getElementById("shapeValue");
+
+        const colorValue =
+            document.getElementById("colorValue");
+
+        const descriptionValue =
+            document.getElementById("descriptionValue");
+
+        const matchesContainer =
+            document.getElementById("matchesContainer");
+
+        const newAnalysisBtn =
+            document.getElementById("newAnalysisBtn");
+
+
+        let selectedFile = null;
+
+
+        // ----------------------------------------
+        // File Selection
+        // ----------------------------------------
+
+        imageInput.addEventListener("change", function () {
+
+            if (this.files.length === 0) {
+                return;
+            }
+
+            selectedFile = this.files[0];
+
+            showPreview(selectedFile);
+
+        });
+
+
+        // ----------------------------------------
+        // Drag & Drop
+        // ----------------------------------------
+
+        uploadCard.addEventListener("dragover", function (event) {
+
+            event.preventDefault();
+
+            uploadCard.classList.add("dragging");
+
+        });
+
+
+        uploadCard.addEventListener("dragleave", function () {
+
+            uploadCard.classList.remove("dragging");
+
+        });
+
+
+        uploadCard.addEventListener("drop", function (event) {
+
+            event.preventDefault();
+
+            uploadCard.classList.remove("dragging");
+
+            const files = event.dataTransfer.files;
+
+            if (files.length > 0) {
+
+                selectedFile = files[0];
+
+                showPreview(selectedFile);
+
+            }
+
+        });
+
+
+        // ----------------------------------------
+        // Show Preview
+        // ----------------------------------------
+
+        function showPreview(file) {
+
+            if (!file.type.startsWith("image/")) {
+
+                showError("Please select a valid image file.");
+
+                return;
+
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+
+                previewImage.src =
+                    event.target.result;
+
+                uploadCard.classList.add("hidden");
+
+                previewCard.classList.remove("hidden");
+
+                resultsSection.classList.add("hidden");
+
+                errorCard.classList.add("hidden");
+
+            };
+
+            reader.readAsDataURL(file);
+
+        }
+
+
+        // ----------------------------------------
+        // Remove Image
+        // ----------------------------------------
+
+        removeBtn.addEventListener("click", function () {
+
+            resetApplication();
+
+        });
+
+
+        // ----------------------------------------
+        // Analyze
+        // ----------------------------------------
+
+        analyzeBtn.addEventListener("click", async function () {
+
+            if (!selectedFile) {
+
+                showError("Please select an image first.");
+
+                return;
+
+            }
+
+
+            const formData = new FormData();
+
+            formData.append(
+                "image_file",
+                selectedFile
+            );
+
+
+            uploadCard.classList.add("hidden");
+
+            previewCard.classList.add("hidden");
+
+            resultsSection.classList.add("hidden");
+
+            errorCard.classList.add("hidden");
+
+            loadingCard.classList.remove("hidden");
+
+
+            try {
+
+                const response =
+                    await fetch("/predict", {
+
+                        method: "POST",
+
+                        body: formData
+
+                    });
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok || !data.success) {
+
+                    throw new Error(
+                        data.error ||
+                        "Prediction failed."
+                    );
+
+                }
+
+
+                displayResults(data);
+
+
+            }
+
+            catch (error) {
+
+                loadingCard.classList.add("hidden");
+
+                showError(error.message);
+
+            }
+
+        });
+
+
+        // ----------------------------------------
+        // Display Results
+        // ----------------------------------------
+
+        function displayResults(data) {
+
+            loadingCard.classList.add("hidden");
+
+            resultsSection.classList.remove("hidden");
+
+
+            resultImage.src =
+                data.image_url;
+
+            signName.textContent =
+                data.display_name || "Unknown";
+
+            confidenceValue.textContent =
+                `${Number(data.confidence).toFixed(1)}%`;
+
+            confidenceFill.style.width =
+                `${Math.min(Number(data.confidence), 100)}%`;
+
+            categoryValue.textContent =
+                data.category || "—";
+
+            shapeValue.textContent =
+                data.detected_shape || "—";
+
+            colorValue.textContent =
+                data.dominant_color || "—";
+
+            descriptionValue.textContent =
+                data.description ||
+                "No description available.";
+
+
+            matchesContainer.innerHTML = "";
+
+
+            if (data.top_matches &&
+                data.top_matches.length > 0) {
+
+                data.top_matches.forEach(
+                    function (match, index) {
+
+                        const confidence =
+                            Number(match.confidence);
+
+                        const item =
+                            document.createElement("div");
+
+                        item.className =
+                            "match-item";
+
+                        item.innerHTML = `
+
+                            <div class="match-info">
+
+                                <span class="match-rank">
+                                    ${index + 1}
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        ${escapeHtml(
+                                            match.display_name
+                                        )}
+                                    </strong>
+
+                                    <small>
+                                        ${match.class_name}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <strong>
+                                ${confidence.toFixed(1)}%
+                            </strong>
+
+                        `;
+
+                        matchesContainer.appendChild(item);
+
+                    }
+                );
+
+            }
+
+        }
+
+
+        // ----------------------------------------
+        // New Analysis
+        // ----------------------------------------
+
+        newAnalysisBtn.addEventListener(
+            "click",
+            function () {
+
+                resetApplication();
+
+            }
+        );
+
+
+        // ----------------------------------------
+        // Error
+        // ----------------------------------------
+
+        function showError(message) {
+
+            errorMessage.textContent =
+                message;
+
+            errorCard.classList.remove("hidden");
+
+        }
+
+
+        // ----------------------------------------
+        // Reset
+        // ----------------------------------------
+
+        function resetApplication() {
+
+            selectedFile = null;
+
+            imageInput.value = "";
+
+            previewImage.src = "";
+
+            uploadCard.classList.remove("hidden");
+
+            previewCard.classList.add("hidden");
+
+            loadingCard.classList.add("hidden");
+
+            resultsSection.classList.add("hidden");
+
+            errorCard.classList.add("hidden");
+
+        }
+
+
+        // ----------------------------------------
+        // Basic HTML Escaping
+        // ----------------------------------------
+
+        function escapeHtml(value) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent =
+                value ?? "";
+
+            return div.innerHTML;
+
+        }
+
+    </script>
+
+</body>
+</html>
